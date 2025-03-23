@@ -6,40 +6,36 @@ import numpy as np
 # 1
 df = pd.read_csv('medical_examination.csv')
 
-# Add 'overweight' column
-# Add 'overweight' column
+
+#2
 df['overweight'] = (df['weight'] / (df['height'] / 100) ** 2 > 25).astype(int)
 
-# Normalize data by making 0 always good and 1 always bad. If the value of 'cholestorol' or 'gluc' is 1,
-# make the value 0. If the value is more than 1, make the value 1.
-df['cholesterol'] = (df['cholesterol'] > 1).astype(int)
+# 3
 df['gluc'] = (df['gluc'] > 1).astype(int)
 
 
-# Draw Categorical Plot
+# 4
 def draw_cat_plot():
-    # Create DataFrame for cat plot using `pd.melt` using just the values from 'cholesterol', 'gluc', 'smoke',
-    # 'alco', 'active', and 'overweight'.
+    # 5
     df_cat = pd.melt(df, id_vars=['cardio'],
                      value_vars=['cholesterol', 'gluc', 'smoke', 'alco', 'active', 'overweight'])
 
-    # Group and reformat the data to split it by 'cardio'. Show the counts of each feature. You will have to rename
-    # one of the collumns for the catplot to work correctly.
+    # 6
     df_cat = df_cat.groupby(['cardio', 'variable', 'value']).size().reset_index()
     df_cat = df_cat.rename(columns={0: 'total'})
 
-    # Draw the catplot with 'sns.catplot()'
+    #7
     graph = sns.catplot(data=df_cat, kind="bar", x="variable", y="total", hue="value", col="cardio")
     fig = graph.fig
 
-    # Do not modify the next two lines
+    # 9
     fig.savefig('catplot.png')
     return fig
 
 
-# Draw Heat Map
+# 10
 def draw_heat_map():
-    # Clean the data
+    # 11
     df_heat = df[(df['ap_lo'] <= df['ap_hi']) &
                  (df['height'] >= df['height'].quantile(0.025)) &
                  (df['height'] <= df['height'].quantile(0.975)) &
@@ -47,18 +43,18 @@ def draw_heat_map():
                  (df['weight'] <= df['weight'].quantile(0.975))
                  ]
 
-    # Calculate the correlation matrix
+    # 12
     corr = df_heat.corr()
 
-    # Generate a mask for the upper triangle
+    # 13
     mask = np.triu(np.ones_like(corr, dtype=bool))
 
-    # Set up the matplotlib figure
+    # 14
     fig, ax = plt.subplots(figsize=(16, 9))
 
-    # Draw the heatmap with 'sns.heatmap()'
+    # 15
     sns.heatmap(corr, mask=mask, square=True, linewidths=0.5, annot=True, fmt="0.1f")
 
-    # Do not modify the next two lines
+    # 16
     fig.savefig('heatmap.png')
     return fig
